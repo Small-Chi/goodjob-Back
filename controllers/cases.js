@@ -235,7 +235,7 @@ export const getHasowner = async (req, res) => {
 // 業主本人查看同意的案子
 export const getAgreen = async (req, res) => {
   try {
-    const result = await cases.find({ owner: req.owner._id }).populate('deal', 'account')
+    const result = await cases.find({ owner: req.owner._id })
     res.status(200).send({ success: true, message: '', result })
   } catch (error) {
     console.log(error)
