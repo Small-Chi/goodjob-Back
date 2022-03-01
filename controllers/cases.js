@@ -1,4 +1,6 @@
 import cases from '../models/cases.js'
+import users from '../models/users.js'
+import owners from '../models/owners.js'
 
 export const create = async (req, res) => {
   try {
@@ -179,9 +181,33 @@ export const NwantDo = async (req, res) => {
 }
 
 // 業者本人查看有投稿的 user
+// export const getHasuser = async (req, res) => {
+//   try {
+//     const result = await cases.find({ owner: req.owner._id })
+//     res.status(200).send({ success: true, message: '', result })
+//   } catch (error) {
+//     console.log(error)
+//     res.status(500).send({ success: false, message: '伺服器錯誤' })
+//   }
+// }
+
+// 業者本人查看有投稿的 user
 export const getHasuser = async (req, res) => {
   try {
-    const result = await cases.find({ owner: req.owner._id })
+    let result = await cases.find({ owner: req.owner._id }).lean()
+    if (result) {
+      for (const i in result) {
+        if (result[i].deal.length > 0) {
+          const r = await users.findById(result[i].deal[0], 'account username')
+          result[i].deal[0] = r
+        }
+        if (result[i].deal.length > 1) {
+          const r = await owners.findById(result[i].deal[1], 'account ownername')
+          result[i].deal[1] = r
+        }
+      }
+    }
+    console.log(result)
     res.status(200).send({ success: true, message: '', result })
   } catch (error) {
     console.log(error)
@@ -235,7 +261,20 @@ export const getHasowner = async (req, res) => {
 // 業主本人查看同意的案子
 export const getAgreen = async (req, res) => {
   try {
-    const result = await cases.find({ owner: req.owner._id })
+    let result = await cases.find({ owner: req.owner._id }).lean()
+    if (result) {
+      for (const i in result) {
+        if (result[i].deal.length > 0) {
+          const r = await users.findById(result[i].deal[0], 'account username')
+          result[i].deal[0] = r
+        }
+        if (result[i].deal.length > 1) {
+          const r = await owners.findById(result[i].deal[1], 'account ownername')
+          result[i].deal[1] = r
+        }
+      }
+    }
+    console.log(result)
     res.status(200).send({ success: true, message: '', result })
   } catch (error) {
     console.log(error)
